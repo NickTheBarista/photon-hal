@@ -100,6 +100,26 @@ extern "C" {
     pub fn spark_deviceID() -> String;
     /// `micros`
     pub fn HAL_Timer_Get_Micro_Seconds() -> system_tick_t;
+
+    /// RGB LED -- commented lines still un-implemented
+    pub fn HAL_Led_Rgb_Set_Values(r: uint16_t, g: uint16_t, b: uint16_t, _: *mut c_void);
+    // DYNALIB_FN(1, hal_rgbled, HAL_Led_Rgb_Get_Values, void(uint16_t*, void*))
+    // DYNALIB_FN(2, hal_rgbled, HAL_Led_Rgb_Get_Max_Value, uint32_t(void*))
+    pub fn HAL_Led_User_Set(state: uint8_t, _: *mut c_void);
+    pub fn HAL_Led_User_Toggle();
+
+    pub fn LED_Signaling_Start();
+    pub fn LED_Signaling_Stop();
+
+    pub fn LED_RGB_IsOverRidden() -> bool;
+
+    pub fn LED_SetBrightness(brightness: uint8_t);
+    pub fn Get_LED_Brightness() -> uint8_t;
+ // DYNALIB_FN(5, services, LED_RGB_Get, void(uint8_t*))
+ // DYNALIB_FN(7, services, LED_On, void(Led_TypeDef))
+ // DYNALIB_FN(8, services, LED_Off, void(Led_TypeDef))
+ // DYNALIB_FN(9, services, LED_Toggle, void(Led_TypeDef))
+ // DYNALIB_FN(10, services, LED_Fade, void(Led_TypeDef))
 }
 
 // TODO add bindings for all functions below, but be sure to know which
@@ -364,11 +384,8 @@ extern "C" {
 // DYNALIB_FN(6, hal_peripherals, HAL_Servo_Write_Pulse_Width, void(uint16_t, uint16_t))
 // DYNALIB_FN(7, hal_peripherals, HAL_Servo_Read_Pulse_Width, uint16_t(uint16_t))
 // DYNALIB_FN(8, hal_peripherals, HAL_Servo_Read_Frequency, uint16_t(uint16_t))
-// DYNALIB_FN(0, hal_rgbled, HAL_Led_Rgb_Set_Values, void(uint16_t, uint16_t, uint16_t, void*))
 // DYNALIB_FN(1, hal_rgbled, HAL_Led_Rgb_Get_Values, void(uint16_t*, void*))
 // DYNALIB_FN(2, hal_rgbled, HAL_Led_Rgb_Get_Max_Value, uint32_t(void*))
-// DYNALIB_FN(3, hal_rgbled, HAL_Led_User_Set, void(uint8_t, void*))
-// DYNALIB_FN(4, hal_rgbled, HAL_Led_User_Toggle, void(void*))
 // DYNALIB_FN(0, hal_socket, socket_active_status, uint8_t(sock_handle_t))
 // DYNALIB_FN(1, hal_socket, socket_handle_valid, uint8_t(sock_handle_t))
 // DYNALIB_FN(2, hal_socket, socket_create, sock_handle_t(uint8_t, uint8_t, uint8_t, uint16_t, network_interface_t))
@@ -498,16 +515,11 @@ extern "C" {
 // DYNALIB_FN(14, rt, _realloc_r, void*(struct _reent*, void*, size_t))
 // DYNALIB_FN(0, services, LED_SetRGBColor, void(uint32_t))
 // DYNALIB_FN(1, services, LED_SetSignalingColor, void(uint32_t))
-// DYNALIB_FN(2, services, LED_Signaling_Start, void(void))
-// DYNALIB_FN(3, services, LED_Signaling_Stop, void(void))
-// DYNALIB_FN(4, services, LED_SetBrightness, void(uint8_t))
 // DYNALIB_FN(5, services, LED_RGB_Get, void(uint8_t*))
-// DYNALIB_FN(6, services, LED_RGB_IsOverRidden, bool(void))
 // DYNALIB_FN(7, services, LED_On, void(Led_TypeDef))
 // DYNALIB_FN(8, services, LED_Off, void(Led_TypeDef))
 // DYNALIB_FN(9, services, LED_Toggle, void(Led_TypeDef))
 // DYNALIB_FN(10, services, LED_Fade, void(Led_TypeDef))
-// DYNALIB_FN(11, services, Get_LED_Brightness, uint8_t(void))
 // DYNALIB_FN(12, services, set_logger_output, void(debug_output_fn, LoggerOutputLevel)) // Deprecated
 // DYNALIB_FN(13, services, panic_, void(ePanicCode, void*, void(*)(uint32_t)))
 // DYNALIB_FN(14, services, jsmn_init, void(jsmn_parser*, void*))

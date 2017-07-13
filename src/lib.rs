@@ -8,7 +8,7 @@ extern crate cty;
 extern crate photon_core;
 extern crate static_ref;
 
-use core::{ops, slice};
+use core::{ops, slice, ptr};
 
 pub mod cloud;
 pub mod ll;
@@ -156,4 +156,33 @@ pub fn delay_us(us: u32) {
 /// Returns the current microseconds
 pub fn micros() -> u32 {
     unsafe { ll::HAL_Timer_Get_Micro_Seconds() }
+}
+
+//////////////////////////////////////////////////
+pub struct RGBLed;
+
+impl RGBLed {
+    pub fn controlled(&self) -> bool {
+        unsafe { ll::LED_RGB_IsOverRidden() }
+    }
+
+    pub fn control(&self, override_control: bool) {
+        if override_control == self.controlled() {
+            return;
+        } else if override_control {
+            unsafe { ll::LED_Signaling_Start() }
+        } else {
+            unsafe { ll::LED_Signaling_Stop() }
+        }
+    }
+
+    pub fn color(&self, r: u16, g: u16, b: u16) {
+        if self.controlled() {
+            unsafe { ll::HAL_Led_Rgb_Set_Values(r, g, b, ptr::null_mut()) }
+        }
+    }
+
+    pub fn get_brightness() -> u8 {
+        unsafe { ll::Get_LED_Brightness() }
+    }
 }
