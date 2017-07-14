@@ -159,13 +159,16 @@ pub fn micros() -> u32 {
 }
 
 //////////////////////////////////////////////////
+
 pub struct RGBLed;
 
 impl RGBLed {
+    /// Return whether or not the RGB LED is under user control (true) or system control (false)
     pub fn controlled(&self) -> bool {
         unsafe { ll::LED_RGB_IsOverRidden() }
     }
 
+    /// Set control of the RGB LED
     pub fn control(&self, override_control: bool) {
         if override_control == self.controlled() {
             return;
@@ -176,13 +179,41 @@ impl RGBLed {
         }
     }
 
+    /// Set the color of the RGB LED
     pub fn color(&self, r: u16, g: u16, b: u16) {
         if self.controlled() {
             unsafe { ll::HAL_Led_Rgb_Set_Values(r, g, b, ptr::null_mut()) }
         }
     }
 
+    /// Get the brightness of the RGB LED
     pub fn get_brightness() -> u8 {
         unsafe { ll::Get_LED_Brightness() }
     }
+
+    /// Set the brightness of the RGB LED, and optionally update the LED's
+    /// state immediately.
+    pub fn set_brightness(&self, brightness: u8, update: bool) {
+        unsafe { ll::LED_SetBrightness(brightness) };
+
+        if update {
+            unsafe { ll::LED_On(ll::LED_RGB) }
+        }
+    }
+
+    pub fn mirror_to(&self, rpin: ll::pin_t, gpin: ll::pin_t, bpin: ll::pin_t,
+                            invert: bool, bootloader: bool) {
+        unsafe {
+            ll::HAL_Core_Led_Mirror_Pin(ll::LED_RED as u8 + ll::LED_MIRROR_OFFSET,
+                rpin, invert as u32, bootloader as u8, ptr::null_mut());
+            ll::HAL_Core_Led_Mirror_Pin(ll::LED_GREEN as u8 + ll::LED_MIRROR_OFFSET,
+                gpin, invert as u32, bootloader as u8, ptr::null_mut());
+            ll::HAL_Core_Led_Mirror_Pin(ll::LED_BLUE as u8 + ll::LED_MIRROR_OFFSET,
+                bpin, invert as u32, bootloader as u8, ptr::null_mut())
+        }
+    } 
+
+    // TODO:
+    // - mirroring options
+    // - change handler stuff
 }

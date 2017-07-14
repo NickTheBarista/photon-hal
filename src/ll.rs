@@ -50,6 +50,23 @@ pub enum Spark_Data_TypeDef {
     CLOUD_VAR_DOUBLE = 9,
 }
 
+#[repr(u8)]
+pub enum Led_TypeDef {
+    LED1 = 0,
+    LED2 = 1,
+    LED3 = 2,
+    LED4 = 3,
+    LED3_LED4_LED2 = 231
+}
+
+pub const LED_MIRROR_OFFSET:u8 = 4;
+
+pub const LED_RGB:Led_TypeDef = Led_TypeDef::LED3_LED4_LED2;
+pub const LED_USER:Led_TypeDef = Led_TypeDef::LED1;
+pub const LED_RED:Led_TypeDef = Led_TypeDef::LED3;
+pub const LED_GREEN:Led_TypeDef = Led_TypeDef::LED4;
+pub const LED_BLUE:Led_TypeDef = Led_TypeDef::LED2;
+
 extern "C" {
     // hal
     /// like `delay` but prevents the system thread from running
@@ -102,6 +119,7 @@ extern "C" {
     pub fn HAL_Timer_Get_Micro_Seconds() -> system_tick_t;
 
     /// RGB LED -- commented lines still un-implemented
+    // FIXME: am I doing the right thing for the "reserved" void pointers here?
     pub fn HAL_Led_Rgb_Set_Values(r: uint16_t, g: uint16_t, b: uint16_t, _: *mut c_void);
     // DYNALIB_FN(1, hal_rgbled, HAL_Led_Rgb_Get_Values, void(uint16_t*, void*))
     // DYNALIB_FN(2, hal_rgbled, HAL_Led_Rgb_Get_Max_Value, uint32_t(void*))
@@ -116,10 +134,13 @@ extern "C" {
     pub fn LED_SetBrightness(brightness: uint8_t);
     pub fn Get_LED_Brightness() -> uint8_t;
  // DYNALIB_FN(5, services, LED_RGB_Get, void(uint8_t*))
- // DYNALIB_FN(7, services, LED_On, void(Led_TypeDef))
- // DYNALIB_FN(8, services, LED_Off, void(Led_TypeDef))
+    pub fn LED_On(led: Led_TypeDef);
+    pub fn LED_Off(led: Led_TypeDef);
  // DYNALIB_FN(9, services, LED_Toggle, void(Led_TypeDef))
  // DYNALIB_FN(10, services, LED_Fade, void(Led_TypeDef))
+
+    pub fn HAL_Core_Led_Mirror_Pin(led: uint8_t, pin: pin_t, invert: uint32_t, bootloader: uint8_t, _: *mut c_void);
+    pub fn HAL_Core_Led_Mirror_Pin_Disable(led: uint8_t, bootloader: uint8_t, _: *mut c_void);
 }
 
 // TODO add bindings for all functions below, but be sure to know which
@@ -277,8 +298,6 @@ extern "C" {
 // DYNALIB_FN(27, hal_core, HAL_Core_Get_Last_Reset_Info, int(int*, uint32_t*, void*))
 // DYNALIB_FN(28, hal_core, HAL_Core_Button_Mirror_Pin, void(uint16_t, InterruptMode, uint8_t, uint8_t, void*))
 // DYNALIB_FN(29, hal_core, HAL_Core_Button_Mirror_Pin_Disable, void(uint8_t, uint8_t, void*))
-// DYNALIB_FN(30, hal_core, HAL_Core_Led_Mirror_Pin, void(uint8_t, pin_t, uint32_t, uint8_t, void*))
-// DYNALIB_FN(31, hal_core, HAL_Core_Led_Mirror_Pin_Disable, void(uint8_t, uint8_t, void*))
 // DYNALIB_FN(32, hal_core, HAL_Set_Event_Callback, void(HAL_Event_Callback, void*))
 // DYNALIB_FN(0, hal_gpio, HAL_Pin_Map, STM32_Pin_Info*(void))
 // DYNALIB_FN(1, hal_gpio, HAL_Validate_Pin_Function, PinFunction(pin_t, PinFunction))
