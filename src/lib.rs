@@ -160,6 +160,11 @@ pub fn micros() -> u32 {
 
 //////////////////////////////////////////////////
 
+// FIXME: maybe split this out into a separate source file?
+// FIXME: most of the simple logic below is stolen from the Particle firmware:
+// https://github.com/spark/firmware/blob/656851a06a0ae659fdb98885218d2256ce5caac4/wiring/src/spark_wiring_rgb.cpp
+// Not sure if there are licensing issues here.
+
 pub struct RGBLed;
 
 impl RGBLed {
@@ -201,6 +206,9 @@ impl RGBLed {
         }
     }
 
+    // FIXME: untested
+    // FIXME: I'd rather pass D4 instead of 4 into the pin arguments here,
+    //        but I guess each Dx is a separate type. Not sure how to do that.
     pub fn mirror_to(&self, rpin: ll::pin_t, gpin: ll::pin_t, bpin: ll::pin_t,
                             invert: bool, bootloader: bool) {
         unsafe {
@@ -214,6 +222,5 @@ impl RGBLed {
     } 
 
     // TODO:
-    // - mirroring options
     // - change handler stuff
 }
